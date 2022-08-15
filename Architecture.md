@@ -99,7 +99,7 @@ flowchart LR;
 ### Transformation
 
 - Snowflake provides schedulable and executable Tasks that can run SQL, Javascript, and - in the foreseeable future - Python code. 
-- Dbt (data-build-tool) can levarage reliable data models for analytics by using SQL and YAML, for implemeting also schema and adata test and adopting Continous Integration out of the box. 
+- Dbt (data-build-tool) can levarage reliable data models for analytics by using SQL and YAML, for implemeting also schema and data tests and adopting Continous Integration out of the box. 
 
 ```mermaid
 
