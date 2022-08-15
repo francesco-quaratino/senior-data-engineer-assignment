@@ -38,10 +38,13 @@ flowchart LR;
   subgraph Analytics
 
     mart(Data Mart) --> 
-      | Read | prescriptive(Prescriptive Analitycs)
+      | Read | descriptive(Descriptive Analitycs)
+      
+    mart(Data Mart) --> 
+      | Read | predictive(Predictive Analitycs) 
 
     mart(Data Mart) --> 
-      | Read | predictive(Predictive Analytics)
+      | Read | prescriptive(Prescriptive Analytics)
 
   end
    
@@ -67,8 +70,8 @@ Assumptions made are:
 ### Extraction and ingestion
 
 - Databricks can deliver data to Snowflake by calling APIs, reading from relational and NoSQL databases, while is able to easily scale to adjust to a changable workload.
-- Fivetran can reliabily deliver data to Snowflake reading from relational database (as per requirement) with the least developing effort and a small administrative effort, as long as the source database has the Change Data Capture or Change Tracking feature enabled.     
-- Snowflake can automatically ingest data from Kafka and S3 via [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe.html). 
+- As long as the source database has the Change Data Capture (CDC) or Change Tracking (CT) feature enabled, Fivetran can reliably deliver data to Snowflake reading from relational database (as per requirement) with the least developing effort and a small administrative effort.     
+- Snowflake can automatically ingest data from Kafka and S3 using [Snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe.html). 
 
 ```mermaid
 
@@ -78,7 +81,7 @@ flowchart LR;
     |Python Notebooks| databricks(((Databricks)))
 
   source_database[(Database)] <-->
-    |*CDC or **CT enabled| fivetran(((Fivetran)))
+    |CDC or CT enabled| fivetran(((Fivetran)))
 
   source_stream(Streaming) -->
     |Kafka or S3| snowpipe(((Snowpipe)))          
@@ -94,15 +97,11 @@ flowchart LR;
    
 ```
 
-(*) CDC = Change Data Capture
 
-(**) CT = Change Tracking
-
-
-### Transformation
+### Transformation, documentation, schema & data test
 
 - Snowflake provides schedulable and executable Tasks that can run SQL, Javascript, and - in the foreseeable future - Python code. 
-- Dbt (data-build-tool) can levarage reliable data models for analytics by using SQL and YAML, for implemeting also schema and data tests while adopting continous integration out of the box. 
+- Dbt (data-build-tool) can levarage highly maintainable transformations to deliver data models for analytics by using SQL and YAML. It also allows implemeting schema and data tests, developing with continous integration, and documenting the data models. 
 
 ```mermaid
 
@@ -124,26 +123,31 @@ flowchart LR;
 
 ### Data access
 
-Analysts are granted read-only access only to data marts, in order to mitigate the impact of possible schema drift.
+Analysts are granted read-only access only to data marts, in order to mitigate "schema drifts".
 
 
 ### Data warehousing
 
-Kimball's dimensional modeling is the method of preference for modeling data. In practical terms, this translates into developing multiple data marts focused on different business areas using a [star schema](https://en.wikipedia.org/wiki/Star_schema) model, which is made out of a fact table that holds measures, referenced by dimension that holds the business context.      
+Kimball's dimensional modeling is generally adopted for developting the data warehouse. In practical terms, this translates into developing multiple data marts focused on different business areas using a [star schema](https://en.wikipedia.org/wiki/Star_schema) model, which is made out of a fact table that holds measures, referenced by dimensions that holds the business context, which can be shared among the different data marts of the data warehouse.      
 
 
-### BI-tool for analysts
+### BI tool for analysts
+
+#### Descriptive analytics
+
+Analysts are given the choice to use Tableau Online or Power BI Service to consume the data through the data marts provided by Snowflake.
+They are also encouraged to run analysis from within the BI tool cloud storage, that means reading from Snowflake as least as possible to load the data into the BI service instead of running direct queries against Snowflake that would result into higher costs for the Snowflake compute.
 
 
 ```mermaid
 
 flowchart LR;
      
-  subgraph Analytics
+  subgraph Analytics with Power BI Service
     
-    subgraph Prescriptive
+    subgraph Descriptive
 
-      direction TB
+      direction LR
       
       mart1(Data Mart) --> 
         | Load | pbi_dataflow
@@ -155,28 +159,11 @@ flowchart LR;
         | Read | self_service_bi(Self-Service BI)      
 
     end
-
-    subgraph Predictive
-
-      direction TB
-      
-      mart2(Data Mart) --> 
-        | Load | databricks_ml
-
-      databricks_ml(Databricks Machine Learning) --> 
-        | Read | self_service_ml(Self-Service ML)      
-
-    end
         
   end
    
 ```
 
-#### Prescriptive analytics
+#### Predictive and prescriptive analytics
 
-Analysts are given the choice to use Tableau Online or Power BI Service to consume the data through the data marts provided by Snowflake.
-They are also encouraged to run analysis from within the BI tool cloud storage, that means reading from Snowflake as least as possible to load the data into the BI service instead of running direct queries against Snowflake that would result into higher costs for the Snowflake compute.
-
-#### Predictive analytics
-
-Analysts can use Databricks Machine Learning feature to run predictive models on top of the data provided by Snowflake via data marts dedicated for ML. 
+Analysts can use Databricks Machine Learning to run predictive and prescriptive models on top of the data provided by Snowflake via dedicated data marts for ML. 
