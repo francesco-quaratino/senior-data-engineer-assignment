@@ -134,8 +134,6 @@ Kimball's dimensional modeling is the method of preference for modeling data. In
 
 ### BI-tool for analysts
 
-Analysts are given the choice to use Tableau Online or Power BI Service to consume the data through the data marts provided by Snowflake.
-They are also encouraged to run analysis from within the BI tool cloud storage, that means reading from Snowflake as least as possible to load the data into the BI service instead of running direct queries against Snowflake that would result into higher costs for the Snowflake compute.
 
 ```mermaid
 
@@ -174,3 +172,11 @@ flowchart LR;
    
 ```
 
+#### Prescriptive analytics
+
+Analysts are given the choice to use Tableau Online or Power BI Service to consume the data through the data marts provided by Snowflake.
+They are also encouraged to run analysis from within the BI tool cloud storage, that means reading from Snowflake as least as possible to load the data into the BI service instead of running direct queries against Snowflake that would result into higher costs for the Snowflake compute.
+
+#### Predictive analytics
+
+Analysts can use Databricks Machine Learning feature to run predictive models on top of the data provided by Snowflake via data marts dedicated for ML. 
